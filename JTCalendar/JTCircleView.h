@@ -10,5 +10,6 @@
 @interface JTCircleView : UIView
 
 @property (nonatomic) UIColor *color;
+@property (nonatomic) BOOL outlineOnly;
 
 @end

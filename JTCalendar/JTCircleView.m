@@ -37,10 +37,11 @@
     CGContextSetStrokeColorWithColor(ctx, [self.color CGColor]);
     CGContextSetFillColorWithColor(ctx, [self.color CGColor]);
     
-    CGContextAddEllipseInRect(ctx, rect);
-    CGContextFillEllipseInRect(ctx, rect);
-    
-    CGContextFillPath(ctx);
+    if (self.outlineOnly) {
+        CGContextStrokeEllipseInRect(ctx, rect);
+    } else {
+        CGContextFillEllipseInRect(ctx, rect);
+    }
 }
 
 - (void)setColor:(UIColor *)color
