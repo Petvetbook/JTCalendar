@@ -66,6 +66,12 @@ static NSString *const kJTCalendarDaySelected = @"kJTCalendarDaySelected";
     }
     
     {
+        dotView = [JTCircleView new];
+        [self addSubview:dotView];
+        dotView.hidden = YES;
+    }
+    
+    {
         circleView = [JTCircleView new];
         [self addSubview:circleView];
     }
@@ -73,12 +79,6 @@ static NSString *const kJTCalendarDaySelected = @"kJTCalendarDaySelected";
     {
         textLabel = [UILabel new];
         [self addSubview:textLabel];
-    }
-    
-    {
-        dotView = [JTCircleView new];
-        [self addSubview:dotView];
-        dotView.hidden = YES;
     }
     
     {
