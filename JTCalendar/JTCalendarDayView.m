@@ -149,6 +149,9 @@ static NSString *const kJTCalendarDaySelected = @"kJTCalendarDaySelected";
             return;
         }
     }
+  
+    // Do not allow selecting a date earlier than today
+    if ([self.date compare:[[NSDate date] dateByAddingTimeInterval:-60 * 60 * 24]] < 0) return;
     
     [self setSelected:YES animated:YES];
     [self.calendarManager setCurrentDateSelected:self.date];

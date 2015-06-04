@@ -71,6 +71,8 @@
 
 - (void)reloadData
 {
+    if (self.contentView.isDragging) return;
+    
     // Erase cache
     [self.dataCache reloadData];
     
@@ -118,7 +120,7 @@
     }
     
     CGFloat ratio = CGRectGetWidth(self.contentView.frame) / CGRectGetWidth(self.menuMonthsView.frame);
-    if(isnan(ratio)){
+    if(isnan(ratio) || !isfinite(ratio)){
         ratio = 1.;
     }
     ratio *= self.calendarAppearance.ratioContentMenu;
@@ -128,6 +130,26 @@
     }
     else if(sender == self.contentView && self.contentView.scrollEnabled){
         self.menuMonthsView.contentOffset = CGPointMake(sender.contentOffset.x / ratio, self.menuMonthsView.contentOffset.y);
+    }
+    
+    // don't allow scrolling left into the past
+    // it would be nice to make this elastic
+    
+    NSCalendar *calendar = self.calendarAppearance.calendar;
+    
+    NSDateComponents *currentComponents = [calendar components:NSCalendarUnitMonth | NSCalendarUnitYear fromDate:self.currentDate];
+    NSDateComponents *nowComponents = [calendar components:NSCalendarUnitMonth | NSCalendarUnitYear fromDate:[NSDate date]];
+
+    NSInteger monthOffset = currentComponents.year * 12 + currentComponents.month - (nowComponents.year * 12 + nowComponents.month);
+    
+    CGFloat pageWidth = CGRectGetWidth(self.contentView.frame);
+    float minX = pageWidth * (2 - monthOffset);
+    float currentMonthOffset = self.contentView.contentOffset.x - minX;
+    if (currentMonthOffset < 0) {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self.contentView setContentOffset:CGPointMake(minX, self.contentView.contentOffset.y) animated:NO];
+            [self.menuMonthsView setContentOffset:CGPointMake(minX / ratio, self.menuMonthsView.contentOffset.y) animated:NO];
+        });
     }
 }
 
